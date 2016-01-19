@@ -1,6 +1,7 @@
 object fMain: TfMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Email Sender'
   ClientHeight = 469
   ClientWidth = 968
@@ -11,6 +12,9 @@ object fMain: TfMain
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object bStartStop: TButton
@@ -20,6 +24,7 @@ object fMain: TfMain
     Height = 25
     Caption = 'START'
     TabOrder = 0
+    OnClick = bStartStopClick
   end
   object pQueue: TPanel
     Left = 8
@@ -57,6 +62,7 @@ object fMain: TfMain
       Top = 27
       Width = 248
       Height = 254
+      ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 1
       WordWrap = False
@@ -77,6 +83,7 @@ object fMain: TfMain
       Height = 25
       Caption = 'Clear queue'
       TabOrder = 3
+      OnClick = bClearClick
     end
     object bClearSent: TButton
       Left = 389
@@ -85,6 +92,7 @@ object fMain: TfMain
       Height = 25
       Caption = 'Clear sent'
       TabOrder = 4
+      OnClick = bClearSentClick
     end
   end
   object pProgress: TPanel
@@ -109,7 +117,7 @@ object fMain: TfMain
       MaxValue = 0
       Progress = 0
     end
-    object Memo1: TMemo
+    object mLog: TMemo
       Left = 8
       Top = 25
       Width = 502
@@ -220,6 +228,20 @@ object fMain: TfMain
       Height = 13
       Caption = 'Delay between emails (ms)'
     end
+    object Label14: TLabel
+      Left = 218
+      Top = 148
+      Width = 52
+      Height = 13
+      Caption = 'Email client'
+    end
+    object Label15: TLabel
+      Left = 10
+      Top = 148
+      Width = 51
+      Height = 13
+      Caption = 'Helo Name'
+    end
     object edServer: TEdit
       Left = 78
       Top = 10
@@ -242,7 +264,7 @@ object fMain: TfMain
       Height = 21
       TabOrder = 2
     end
-    object Edit1: TEdit
+    object edPass: TEdit
       Left = 286
       Top = 37
       Width = 131
@@ -288,9 +310,60 @@ object fMain: TfMain
       NumbersOnly = True
       TabOrder = 8
     end
+    object edEmailClient: TEdit
+      Left = 286
+      Top = 145
+      Width = 131
+      Height = 21
+      TabOrder = 9
+    end
+    object edHelo: TEdit
+      Left = 78
+      Top = 145
+      Width = 131
+      Height = 21
+      TabOrder = 10
+    end
+    object cbUseHelo: TCheckBox
+      Left = 10
+      Top = 172
+      Width = 199
+      Height = 25
+      Caption = 'Use Helo'
+      TabOrder = 11
+    end
   end
   object od: TOpenDialog
     Left = 56
     Top = 208
+  end
+  object smtp: TIdSMTP
+    SASLMechanisms = <>
+    Left = 608
+    Top = 320
+  end
+  object ssl: TIdSSLIOHandlerSocketOpenSSL
+    MaxLineAction = maException
+    Port = 0
+    DefaultPort = 0
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 656
+    Top = 320
+  end
+  object mess: TIdMessage
+    AttachmentEncoding = 'MIME'
+    BccList = <>
+    CCList = <>
+    Encoding = meDefault
+    FromList = <
+      item
+      end>
+    Recipients = <>
+    ReplyTo = <>
+    ConvertPreamble = True
+    Left = 704
+    Top = 320
   end
 end
