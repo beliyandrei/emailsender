@@ -222,6 +222,7 @@ begin
          mLog.Lines.Insert(0,DateTimeToStr(now)+' - SMTP Sending ERROR '+e.Message);
         if (pos('is not a valid',e.Message) > 0) or
            (pos('RFC-5321',e.Message) > 0) or
+           (pos('Bad recipient address syntax',e.Message) > 0) or
            (pos('Syntax error.',e.Message) > 0) then
           isStop := false else
           isStop := true;
