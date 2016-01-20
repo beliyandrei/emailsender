@@ -353,7 +353,7 @@ object fMain: TfMain
     Top = 320
   end
   object mess: TIdMessage
-    AttachmentEncoding = 'MIME'
+    AttachmentEncoding = 'UUE'
     BccList = <>
     CCList = <>
     Encoding = meDefault

@@ -206,34 +206,49 @@ begin
     added := 0;
     while (added < StrToIntDef(edMaxRec.Text,1)) and ((mQueue.Lines.Count - added) > 0) do
     begin
-      mess.Recipients.Add.Address := mQueue.Lines.Strings[added];
+      mess.Recipients.Add.Address := trim(mQueue.Lines.Strings[added]);
       if added > 0 then
       emails := emails + ',';
-      emails := emails + mQueue.Lines.Strings[added];
+      emails := emails + trim(mQueue.Lines.Strings[added]);
       added := added + 1;
     end;
 
     try
       smtp.Send(mess);
-      smtp.Disconnect;
       mLog.Lines.Insert(0, DateTimeToStr(now)+' - SMTP Sending OK :'+emails);
-      gProgress.Progress := gProgress.Progress + added;
-      while added > 0 do
-      begin
-        mSent.Lines.Add(mQueue.Lines.Strings[0]);
-        mQueue.Lines.Delete(0);
-        added := added - 1;
-      end;
-      Application.ProcessMessages;
-      if StrToIntDef(edDelay.Text,1) > 0 then
-        Sleep(StrToIntDef(edDelay.Text,1));
     except
       on e:exception do
       begin
-        mLog.Lines.Insert(0,DateTimeToStr(now)+' - SMTP Sending ERROR '+e.Message);
+         mLog.Lines.Insert(0,DateTimeToStr(now)+' - SMTP Sending ERROR '+e.Message);
+        if (pos('is not a valid',e.Message) > 0) or
+           (pos('RFC-5321',e.Message) > 0) or
+           (pos('Syntax error.',e.Message) > 0) then
+          isStop := false else
+          isStop := true;
+      end;
+    end;
+
+    gProgress.Progress := gProgress.Progress + added;
+    while added > 0 do
+    begin
+      mSent.Lines.Add(mQueue.Lines.Strings[0]);
+      mQueue.Lines.Delete(0);
+      added := added - 1;
+    end;
+    Application.ProcessMessages;
+    if StrToIntDef(edDelay.Text,1) > 0 then
+      Sleep(StrToIntDef(edDelay.Text,1));
+
+    try
+      smtp.Disconnect;
+    except
+      on e:exception do
+      begin
+        mLog.Lines.Insert(0,DateTimeToStr(now)+' - SMTP Disconnect ERROR '+e.Message);
         isStop := true;
       end;
     end;
+
     Application.ProcessMessages;
   end;
 
